@@ -9,16 +9,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class SpringMailSender {
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Value("${spring.mail.username}")
+    JavaMailSender mailSender;
+    @Value("TH3Valonik.1337@yandex.by")
     private String username;
-
-    public void send(String emailTo, String subject, String message) {
+    public void send(String emeailTo, String subject,String message){
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(username);
-        mailMessage.setTo(emailTo);
+        mailMessage.setTo(emeailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
 
