@@ -3,7 +3,6 @@ package com.example.switterio.Controller;
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
 import com.example.switterio.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,8 +15,13 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public String userList(Model model) {
@@ -25,6 +29,7 @@ public class UserController {
 
         return "userList";
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("{user}")
     public String userEditForm(@PathVariable User user, Model model) {
@@ -33,6 +38,7 @@ public class UserController {
 
         return "userEdit";
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public String userSave(
@@ -40,9 +46,10 @@ public class UserController {
             @RequestParam Map<String, String> form,
             @RequestParam("userId") User user
     ) {
-        userService.saveUser(user,username,form);
+        userService.saveUser(user, username, form);
         return "redirect:/user";
     }
+
     @GetMapping("profile")
     public String getProfile(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("username", user.getUsername());

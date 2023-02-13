@@ -3,7 +3,6 @@ package com.example.switterio.service;
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
 import com.example.switterio.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,10 +14,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private  UserRepository userRepository;
-    @Autowired
-    private SpringMailSender springMailSender;
+
+    private final UserRepository userRepository;
+
+    private final SpringMailSender springMailSender;
+
+    public UserService(UserRepository userRepository, SpringMailSender springMailSender) {
+        this.userRepository = userRepository;
+        this.springMailSender = springMailSender;
+    }
 
 
     @Override
