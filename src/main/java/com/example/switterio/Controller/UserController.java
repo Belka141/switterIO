@@ -2,6 +2,7 @@ package com.example.switterio.Controller;
 
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
+import com.example.switterio.repository.UserRepository;
 import com.example.switterio.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,9 +18,12 @@ public class UserController {
 
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -49,6 +53,15 @@ public class UserController {
         userService.saveUser(user, username, form);
         return "redirect:/user";
     }
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping("/delete/{username}")
+    public String userDelete(@PathVariable String username, Model model){
+        User user = userRepository.findByUsername(username);
+        userRepository.delete(user);
+        model.addAttribute("user", user);
+        model.addAttribute("users", userRepository.findAll());
+        return "redirect:/user";
+    }
 
     @GetMapping("profile")
     public String getProfile(Model model, @AuthenticationPrincipal User user) {
@@ -68,4 +81,5 @@ public class UserController {
 
         return "redirect:/user/profile";
     }
+
 }

@@ -14,8 +14,9 @@
         <#list users as user>
             <tr>
                 <td>${user.username}</td>
-                <td><#list user.roles as role>${role}<#sep>, </#list></td>
-                <td><a href="/user/${user.id}">edit</a></td>
+                <td><#list user.roles as role> ${role}<#sep>, </#list></td>
+                <td><a href="/user/${user.id}">Edit</a></td>
+                <td><a href="/user/delete/${user.username}">Delete</a></td>
             </tr>
         </#list>
         </tbody>

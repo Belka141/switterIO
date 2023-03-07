@@ -108,11 +108,9 @@ public class UserService implements UserDetailsService {
                 user.setActivationCode(UUID.randomUUID().toString());
             }
         }
-
         if (!StringUtils.isEmpty(password)) {
             user.setPassword(password);
         }
-
         userRepository.save(user);
 
         if (isEmailChanged) {
