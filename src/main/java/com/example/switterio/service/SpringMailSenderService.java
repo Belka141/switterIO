@@ -6,21 +6,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SpringMailSender {
-
-    private final JavaMailSender mailSender;
-    @Value("TH3Valonik.1337@yandex.by")
+public class SpringMailSenderService {
+    @Value("belo4kalala@outlook.com")
     private String username;
 
-    public SpringMailSender(JavaMailSender mailSender) {
+    private final JavaMailSender mailSender;
+
+    public SpringMailSenderService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
-    public void send(String emeailTo, String subject,String message){
+    public void send(String emailTo, String subject,String message){
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(username);
-        mailMessage.setTo(emeailTo);
+        mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
 

@@ -17,9 +17,9 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    private final SpringMailSender springMailSender;
+    private final SpringMailSenderService springMailSender;
 
-    public UserService(UserRepository userRepository, SpringMailSender springMailSender) {
+    public UserService(UserRepository userRepository, SpringMailSenderService springMailSender) {
         this.userRepository = userRepository;
         this.springMailSender = springMailSender;
     }
