@@ -43,11 +43,12 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
+        sendMessage(user);
         return true;
     }
 
     private void sendMessage(User user) {
-        if (!StringUtils.hasLength(user.getEmail())) {
+        if (StringUtils.hasLength(user.getEmail())) {
             String message = String.format(
                     "Hello, %s! \n" +
                             "Welcome to SwitterIO. Please, visit next link: http://localhost:8080/activate/%s",
@@ -73,7 +74,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public  List<User> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -104,11 +105,11 @@ public class UserService implements UserDetailsService {
         if (isEmailChanged) {
             user.setEmail(email);
 
-            if (!StringUtils.hasLength(email)) {
+            if (StringUtils.hasLength(email)) {
                 user.setActivationCode(UUID.randomUUID().toString());
             }
         }
-        if (!StringUtils.hasLength(password)) {
+        if (StringUtils.hasLength(password)) {
             user.setPassword(password);
         }
         userRepository.save(user);
