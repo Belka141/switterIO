@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void sendMessage(User user) {
-        if (!StringUtils.isEmpty(user.getEmail())) {
+        if (!StringUtils.hasLength(user.getEmail())) {
             String message = String.format(
                     "Hello, %s! \n" +
                             "Welcome to SwitterIO. Please, visit next link: http://localhost:8080/activate/%s",
@@ -104,11 +104,11 @@ public class UserService implements UserDetailsService {
         if (isEmailChanged) {
             user.setEmail(email);
 
-            if (!StringUtils.isEmpty(email)) {
+            if (!StringUtils.hasLength(email)) {
                 user.setActivationCode(UUID.randomUUID().toString());
             }
         }
-        if (!StringUtils.isEmpty(password)) {
+        if (!StringUtils.hasLength(password)) {
             user.setPassword(password);
         }
         userRepository.save(user);
