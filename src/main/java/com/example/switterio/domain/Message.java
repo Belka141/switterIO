@@ -1,14 +1,20 @@
 package com.example.switterio.domain;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
 
 @Entity
 public class Message {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @NotBlank(message = "Please write a message")
+    @Length(max = 2048,message = "message too long(allowed 2kb)")
     private String text;
+    @Length(max = 255,message = "message too long(allowed 255)")
     private String tag;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -3,7 +3,5 @@
 
 <@c.page>
     <div class = "mb-1">Add new User</div>
-<#--    <#if message??>${message}<#else></#if>-->
-    ${message!}
     <@l.login "/registration"  true/>
 </@c.page>

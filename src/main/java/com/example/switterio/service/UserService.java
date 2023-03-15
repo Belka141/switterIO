@@ -7,12 +7,10 @@ import com.example.switterio.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +30,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user;
     }
 
     public boolean addUser(User user) {
@@ -116,7 +118,7 @@ public class UserService implements UserDetailsService {
             }
         }
         if (StringUtils.hasLength(password)) {
-            user.setPassword(beanConfig.getPasswordEncoder()    .encode(password));
+            user.setPassword(beanConfig.getPasswordEncoder().encode(password));
         }
         userRepository.save(user);
 
