@@ -1,15 +1,18 @@
 package com.example.switterio.service;
 
+import com.example.switterio.config.BeanConfig;
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
 import com.example.switterio.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,10 +21,12 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final SpringMailSenderService springMailSender;
+    private final BeanConfig beanConfig;
 
-    public UserService(UserRepository userRepository, SpringMailSenderService springMailSender) {
+    public UserService(UserRepository userRepository, SpringMailSenderService springMailSender, BeanConfig beanConfig) {
         this.userRepository = userRepository;
         this.springMailSender = springMailSender;
+        this.beanConfig = beanConfig;
     }
 
 
@@ -40,6 +45,7 @@ public class UserService implements UserDetailsService {
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(beanConfig.getPasswordEncoder().encode(user.getPassword()));
 
         userRepository.save(user);
 
@@ -110,7 +116,7 @@ public class UserService implements UserDetailsService {
             }
         }
         if (StringUtils.hasLength(password)) {
-            user.setPassword(password);
+            user.setPassword(beanConfig.getPasswordEncoder()    .encode(password));
         }
         userRepository.save(user);
 
