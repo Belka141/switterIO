@@ -20,7 +20,7 @@
             <form method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <input type="text" class="form-control ${(textError??)?string('is-invalid', '')}"
-                           value="<#if message??>${message.text}</#if>" name="text" placeholder="Введите сообщение" />
+                           value="<#if message??>${message.text}</#if>" name="text" placeholder="Write message" />
                     <#if textError??>
                         <div class="invalid-feedback">
                             ${textError}
@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control  ${(tagError??)?string('is-invalid', '')}"
-                           value="<#if message??>${message.tag}</#if>" name="tag" placeholder="Тэг">
+                           value="<#if message??>${message.tag}</#if>" name="tag" placeholder="Tag">
                     <#if tagError??>
                         <div class="invalid-feedback">
                             ${tagError}
@@ -44,7 +44,7 @@
                 </div>
                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <button type="submit" class="btn btn-primary">Post</button>
                 </div>
             </form>
         </div>
