@@ -14,11 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
-    private final BeanConfig beanConfig;
+    private final EncryptConfig encryptConfig;
 
-    public WebSecurityConfig(UserService userService, BeanConfig beanConfig) {
+    public WebSecurityConfig(UserService userService, EncryptConfig encryptConfig) {
         this.userService = userService;
-        this.beanConfig = beanConfig;
+        this.encryptConfig = encryptConfig;
     }
 
 
@@ -43,6 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService)
-                .passwordEncoder(beanConfig.getPasswordEncoder());
+                .passwordEncoder(encryptConfig.getPasswordEncoder());
     }
 }

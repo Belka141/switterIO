@@ -1,9 +1,10 @@
 package com.example.switterio.service;
 
-import com.example.switterio.config.BeanConfig;
+import com.example.switterio.config.EncryptConfig;
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
 import com.example.switterio.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,12 +20,14 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final SpringMailSenderService springMailSender;
-    private final BeanConfig beanConfig;
+    private final EncryptConfig encryptConfig;
+    @Value("${hostname}")
+    private String hostname;
 
-    public UserService(UserRepository userRepository, SpringMailSenderService springMailSender, BeanConfig beanConfig) {
+    public UserService(UserRepository userRepository, SpringMailSenderService springMailSender, EncryptConfig encryptConfig) {
         this.userRepository = userRepository;
         this.springMailSender = springMailSender;
-        this.beanConfig = beanConfig;
+        this.encryptConfig = encryptConfig;
     }
 
 
@@ -47,7 +50,7 @@ public class UserService implements UserDetailsService {
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
-        user.setPassword(beanConfig.getPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(encryptConfig.getPasswordEncoder().encode(user.getPassword()));
 
         userRepository.save(user);
 
@@ -59,8 +62,9 @@ public class UserService implements UserDetailsService {
         if (StringUtils.hasLength(user.getEmail())) {
             String message = String.format(
                     "Hello, %s! \n" +
-                            "Welcome to SwitterIO. Please, visit next link: http://localhost:8080/activate/%s",
+                            "Welcome to SwitterIO. Please, visit next link: http://%s/activate/%s",
                     user.getUsername(),
+                    hostname,
                     user.getActivationCode()
             );
 
@@ -118,7 +122,7 @@ public class UserService implements UserDetailsService {
             }
         }
         if (StringUtils.hasLength(password)) {
-            user.setPassword(beanConfig.getPasswordEncoder().encode(password));
+            user.setPassword(encryptConfig.getPasswordEncoder().encode(password));
         }
         userRepository.save(user);
 
