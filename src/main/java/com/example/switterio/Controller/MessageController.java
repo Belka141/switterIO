@@ -2,8 +2,7 @@ package com.example.switterio.Controller;
 
 import com.example.switterio.domain.Message;
 import com.example.switterio.domain.User;
-import com.example.switterio.repository.MessageRepository;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.switterio.service.MessageService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,21 +13,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 
 
 @Controller
-public class MainController {
+public class MessageController {
 
-    private final MessageRepository messageRepository;
-    @Value("${upload.path}")
-    private String uploadPath;
+    private final MessageService messageService;
 
-    public MainController(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
+
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @GetMapping("/")
@@ -38,13 +34,7 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
-        Iterable<Message> messages = messageRepository.findAll();
-
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTag(filter);
-        } else {
-            messages = messageRepository.findAll();
-        }
+        Iterable<Message> messages = messageService.getMessages(filter);
         model.addAttribute("messages", messages);
         model.addAttribute("filter", filter);
 
@@ -67,26 +57,13 @@ public class MainController {
             model.mergeAttributes(errorMap);
             model.addAttribute("message", message);
         } else {
-            if (file != null && !file.getOriginalFilename().isEmpty()) {
-                File uploadeDir = new File(uploadPath);
-                if (!uploadeDir.exists()) {
-                    uploadeDir.mkdir();
-                }
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFileName = uuidFile + "." + file.getOriginalFilename();
-                file.transferTo(new File(uploadPath + "/" + resultFileName));
-                message.setFilename(resultFileName);
-
-            }
-
+            messageService.saveMessage(message, file);
             model.addAttribute("message", null);
-
-            messageRepository.save(message);
         }
-        Iterable<Message> messages = messageRepository.findAll();
+
+        Iterable<Message> messages = messageService.getMessages(null);
         model.addAttribute("messages", messages);
         return "main";
     }
-
-
 }
+

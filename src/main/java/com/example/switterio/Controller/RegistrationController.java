@@ -2,6 +2,7 @@ package com.example.switterio.Controller;
 
 import com.example.switterio.domain.User;
 import com.example.switterio.domain.dto.CaptchaResponseDTO;
+import com.example.switterio.service.RegistrationService;
 import com.example.switterio.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -19,16 +20,10 @@ import java.util.Map;
 
 @Controller
 public class RegistrationController {
-    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    private final RegistrationService registrationService;
 
-    @Value("${recaptcha.secret}")
-    private String secret;
-    private final UserService userService;
-    private final RestTemplate restTemplate;
-
-    public RegistrationController(UserService userService, RestTemplate restTemplate) {
-        this.userService = userService;
-        this.restTemplate = restTemplate;
+    public RegistrationController(RegistrationService registrationService) {
+        this.registrationService = registrationService;
     }
 
     @GetMapping("/registration")
@@ -38,30 +33,14 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(
-            @RequestParam("g-recaptcha-response") String captchaResonse,
+            @RequestParam("g-recaptcha-response") String captchaResponse,
             @Valid User user,
             BindingResult bindingResult,
             Model model
     ) {
-        String url = String.format(CAPTCHA_URL, secret, captchaResonse);
-        CaptchaResponseDTO response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDTO.class);
-        if (!response.isSuccess()) {
-            model.addAttribute("captchaError", "Fill captcha");
-        }
+        boolean isAdded = registrationService.addUser(captchaResponse, user, bindingResult, model);
 
-        if (bindingResult.hasErrors() || !response.isSuccess()) {
-            Map<String, String> errors = ControllerUtil.getErrors(bindingResult);
-            model.mergeAttributes(errors);
-
-            return "registration";
-
-        }
-        if (user.getPassword() != null && !user.getPassword().equals(user.getPassword2())) {
-            model.addAttribute("passwordError", "Passwords are different!");
-            return "registration";
-        }
-        if (!userService.addUser(user)) {
-            model.addAttribute("usernameError", "User exists!");
+        if (!isAdded) {
             return "registration";
         }
 
@@ -70,16 +49,12 @@ public class RegistrationController {
 
     @GetMapping("/activate/{code}")
     public String activate(Model model, @PathVariable String code) {
-        boolean isActivated = userService.activateUser(code);
+        boolean isActivated = registrationService.activateUser(model, code);
 
-        if (isActivated) {
-            model.addAttribute("messageType", "success");
-            model.addAttribute("message", "User successfully activated");
-        } else {
-            model.addAttribute("messageType", "danger");
-            model.addAttribute("message", "Activation code is not found!");
+        if (!isActivated) {
+            return "login";
         }
 
-        return "login";
+        return "redirect:/login";
     }
 }
