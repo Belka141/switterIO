@@ -1,9 +1,11 @@
 package com.example.switterio.Controller;
 
+import com.example.switterio.domain.Message;
 import com.example.switterio.domain.Role;
 import com.example.switterio.domain.User;
 import com.example.switterio.repository.UserRepository;
 import com.example.switterio.service.UserService;
+import org.springframework.boot.Banner;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/user")
@@ -80,6 +83,20 @@ public class UserController {
         userService.updateProfile(user, password, email);
 
         return "redirect:/user/profile";
+    }
+
+    @GetMapping("/user-messages/{user}")
+    public String userMessages(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable User user,
+            Model  model
+    ) {
+
+        Set<Message> messages = user.getMessages();
+        model.addAttribute("messages");
+        model.addAttribute("isCurrentUSer", currentUser.equals(user));
+
+        return "userMessages";
     }
 
 }
