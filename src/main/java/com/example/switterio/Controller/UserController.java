@@ -85,20 +85,4 @@ public class UserController {
         return "redirect:/user/profile";
     }
 
-    @GetMapping("/user-messages/{user}")
-    public String userMessages(
-            @AuthenticationPrincipal User currentUser,
-            @PathVariable User user,
-            Model model,
-            @RequestParam(required = false) Message message
-    ) {
-        Set<Message> messages = user.getMessages();
-
-        model.addAttribute("messages", messages);
-        model.addAttribute("message", message);
-        model.addAttribute("isCurrentUser", currentUser.equals(user));
-
-        return "userMessages";
-    }
-
 }

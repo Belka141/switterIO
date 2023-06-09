@@ -29,7 +29,7 @@ public class MessageService {
         }
     }
 
-    public void saveMessage(Message message, MultipartFile file) throws IOException {
+    public void saveFile(Message message, MultipartFile file) throws IOException {
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             File uploadeDir = new File(uploadPath);
             if (!uploadeDir.exists()) {
