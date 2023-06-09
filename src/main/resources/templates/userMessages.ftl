@@ -3,7 +3,7 @@
 <@c.page>
     <#if isCurrentUser>
         <#include "parts/messageEdit.ftl" />
-    <#/if>
+    </#if>
     <#include "parts/messageList.ftl" />
 
 </@c.page>

@@ -89,12 +89,14 @@ public class UserController {
     public String userMessages(
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user,
-            Model  model
+            Model model,
+            @RequestParam(required = false) Message message
     ) {
-
         Set<Message> messages = user.getMessages();
-        model.addAttribute("messages");
-        model.addAttribute("isCurrentUSer", currentUser.equals(user));
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("message", message);
+        model.addAttribute("isCurrentUser", currentUser.equals(user));
 
         return "userMessages";
     }
