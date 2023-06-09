@@ -97,11 +97,11 @@ public class MessageController {
             @RequestParam("file") MultipartFile file
     ) throws IOException {
         if (message.getAuthor().equals(currentUser)) {
-            if (!StringUtils.isEmpty(text)) {
+            if(StringUtils.hasLength(text)) {
                 message.setText(text);
             }
 
-            if (!StringUtils.isEmpty(tag)) {
+            if (StringUtils.hasLength(tag)) {
                 message.setTag(tag);
             }
 
@@ -112,5 +112,17 @@ public class MessageController {
 
         return "redirect:/user-messages/" + user;
     }
+    @GetMapping("/del-user-messages/{user}")
+    public String deleteMessage(
+            @PathVariable Long user,
+            @RequestParam("message") Long messageId
+    )throws IOException{
+
+        messageRepository.deleteById(messageId);
+
+        return "redirect:/user-messages/" + user;
+    }
+
+
 }
 

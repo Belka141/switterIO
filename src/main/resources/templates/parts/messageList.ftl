@@ -16,6 +16,9 @@
                     <a class="btn btn-primary" href="/user-messages/${message.author.id}?message=${message.id}">
                         Edit
                     </a>
+                    <a class="btn btn-warning" href="/del-user-messages/${message.author.id}?message=${message.id}">
+                        Delete
+                    </a>
                 </#if>
             </div>
         </div>
