@@ -1,10 +1,13 @@
 <#include "security.ftl">
+<#import "pager.ftl" as p>
 
-<div class="card-columns">
-    <#list messages as message>
-        <div class="card my-3">
+<@p.pager url page />
+
+<div class="card-columns" id="message-list">
+    <#list page.content as message>
+        <div class="card my-3" data-id="${message.id}">
             <#if message.filename??>
-                <img src="/img/${message.filename}" class="card-img-top">
+                <img src="/img/${message.filename}" class="card-img-top" />
             </#if>
             <div class="m-2">
                 <span>${message.text}</span><br/>
@@ -16,9 +19,6 @@
                     <a class="btn btn-primary" href="/user-messages/${message.author.id}?message=${message.id}">
                         Edit
                     </a>
-                    <a class="btn btn-warning" href="/del-user-messages/${message.author.id}?message=${message.id}">
-                        Delete
-                    </a>
                 </#if>
             </div>
         </div>
@@ -26,3 +26,5 @@
         No message
     </#list>
 </div>
+
+<@p.pager url page />

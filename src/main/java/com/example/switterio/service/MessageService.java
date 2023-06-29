@@ -21,13 +21,6 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Iterable<Message> getMessages(String filter) {
-        if (filter != null && !filter.isEmpty()) {
-            return messageRepository.findByTag(filter);
-        } else {
-            return messageRepository.findAll();
-        }
-    }
 
     public void saveFile(Message message, MultipartFile file) throws IOException {
         if (file != null && !file.getOriginalFilename().isEmpty()) {

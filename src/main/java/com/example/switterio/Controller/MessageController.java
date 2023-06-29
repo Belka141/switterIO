@@ -4,6 +4,10 @@ import com.example.switterio.domain.Message;
 import com.example.switterio.domain.User;
 import com.example.switterio.repository.MessageRepository;
 import com.example.switterio.service.MessageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,9 +44,21 @@ public class MessageController {
     }
 
     @GetMapping("/main")
-    public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
-        Iterable<Message> messages = messageService.getMessages(filter);
-        model.addAttribute("messages", messages);
+    public String main(
+            @RequestParam(required = false, defaultValue = "")
+            String filter,
+            Model model,
+            @PageableDefault(sort ={ "id" }, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Message> page;
+
+        if (filter != null && !filter.isEmpty()) {
+            page = messageRepository.findByTag(filter, pageable);
+        } else {
+            page = messageRepository.findAll(pageable);
+        }
+
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/main");
         model.addAttribute("filter", filter);
 
         return "main";
@@ -68,7 +84,7 @@ public class MessageController {
             model.addAttribute("message", null);
         }
 
-        Iterable<Message> messages = messageService.getMessages(null);
+        Iterable<Message> messages = messageRepository.findAll();
         model.addAttribute("messages", messages);
         return "main";
     }
